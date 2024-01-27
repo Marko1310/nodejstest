@@ -1,6 +1,7 @@
 import { authorized } from "./src/authorized";
 import { updateResource, getResource } from "./src/manageResource";
 import type { APIGatewayEvent } from "aws-lambda";
+import { BaseError } from "common/errors";
 
 export const handler = async function (event: Partial<APIGatewayEvent>) {
   try {
@@ -24,6 +25,9 @@ export const handler = async function (event: Partial<APIGatewayEvent>) {
 
     return { statusCode: 200, body: JSON.stringify({}) };
   } catch (error) {
+    if (error instanceof BaseError) {
+      return { statusCode: error.httpStatusCode, body: JSON.stringify({ error: error.message }) };
+    }
     return { statusCode: 500, body: JSON.stringify({ error }) };
   }
 };

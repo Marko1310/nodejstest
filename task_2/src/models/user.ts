@@ -2,6 +2,7 @@ import { DocumentClient } from "aws-sdk/lib/dynamodb/document_client";
 import { dbClient, TableNames } from "../common/db";
 import { Role } from "./role";
 import { UserAttributes } from "common/types";
+import { HTTP404Error } from "common/errors";
 
 type IDocumentClient<T> = Omit<DocumentClient.AttributeMap["GetItemOutput"], "Item"> & {
   Item?: T;
@@ -22,7 +23,7 @@ export class User {
     const { Item: user } = (await dbClient
       .get({ TableName: TableNames.users, Key: { id } })
       .promise()) as IDocumentClient<UserAttributes>;
-    if (!user) throw new Error("User does not exist");
+    if (!user) throw new HTTP404Error("User does not exist");
 
     return new User(user);
   }

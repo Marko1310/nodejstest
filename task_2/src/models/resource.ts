@@ -1,6 +1,7 @@
 import { DocumentClient } from "aws-sdk/lib/dynamodb/document_client";
 import { dbClient, TableNames } from "../common/db";
 import { ResourceAttributes } from "common/types";
+import { HTTP404Error } from "common/errors";
 
 type IDocumentClient<T> = Omit<DocumentClient.AttributeMap["GetItemOutput"], "Item"> & {
   Item?: T;
@@ -21,10 +22,7 @@ export class Resource {
     const { Item: resource } = (await dbClient
       .get({ TableName: TableNames.resources, Key: { id } })
       .promise()) as IDocumentClient<ResourceAttributes>;
-
-    if (!resource) {
-      throw new Error("Resource does not exist");
-    }
+    if (!resource) throw new HTTP404Error("Resource does not exist");
 
     return new Resource(resource);
   }

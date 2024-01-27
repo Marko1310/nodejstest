@@ -12,6 +12,15 @@ export const handler = async function (event: Partial<APIGatewayEvent>) {
 
     // TODO: return value from resource or update it
     // write it in file src/manageResource.ts and import to use here
+    if (!userId || !resourceId || (action !== "GET" && action !== "PATCH")) {
+      return { statusCode: 400, body: JSON.stringify({ message: "Bad request" }) };
+    }
+
+    const isAuthorized = await authorized(userId, resourceId, action);
+
+    if (!isAuthorized) {
+      return { statusCode: 403, body: JSON.stringify({ message: "Unauthorized" }) };
+    }
 
     return { statusCode: 200, body: JSON.stringify({}) };
   } catch (error) {

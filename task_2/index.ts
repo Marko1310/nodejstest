@@ -1,8 +1,9 @@
+import type { APIGatewayEvent } from "aws-lambda";
 import { authorized } from "./src/authorized";
 import { updateResource, getResource } from "./src/manageResource";
-import type { APIGatewayEvent } from "aws-lambda";
 import { validateEventParameters } from "validateEventParameters";
-import { BaseError, HTTP403Error, HTTP404Error } from "common/errors";
+import { BaseError, HTTP403Error } from "common/errors";
+import { HttpStatusCode } from "common/types";
 
 export const handler = async function (event: Partial<APIGatewayEvent>) {
   try {
@@ -21,15 +22,15 @@ export const handler = async function (event: Partial<APIGatewayEvent>) {
     switch (action) {
       case "GET":
         value = await getResource(resourceId);
-        return { statusCode: 200, body: JSON.stringify({ value }) };
+        return { statusCode: HttpStatusCode.OK, body: JSON.stringify({ value }) };
 
       case "PATCH":
         value = await updateResource(resourceId, userId);
-        return { statusCode: 200, body: JSON.stringify({ value }) };
+        return { statusCode: HttpStatusCode.OK, body: JSON.stringify({ value }) };
 
       default:
         return {
-          statusCode: 400,
+          statusCode: HttpStatusCode.BAD_REQUEST,
           body: JSON.stringify({ message: "Unsupported method" }),
         };
     }
@@ -37,6 +38,6 @@ export const handler = async function (event: Partial<APIGatewayEvent>) {
     if (error instanceof BaseError) {
       return { statusCode: error.httpStatusCode, body: JSON.stringify({ error: error.message }) };
     }
-    return { statusCode: 500, body: JSON.stringify({ error }) };
+    return { statusCode: HttpStatusCode.INTERNAL_SERVER, body: JSON.stringify({ error }) };
   }
 };

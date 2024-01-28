@@ -34,4 +34,33 @@ export class Resource {
       if (error instanceof HTTP404Error) return undefined;
     }
   }
+
+  static async create(attributes: ResourceAttributes) {
+    try {
+      await dbClient.put({ TableName: TableNames.resources, Item: attributes }).promise();
+      return new Resource(attributes);
+    } catch (error) {
+      console.error("Create resource error:", error);
+      throw new Error("Create resource error");
+    }
+  }
+
+  static async update(id: string, value: number) {
+    try {
+      await dbClient
+        .update({
+          TableName: TableNames.resources,
+          Key: { id },
+          UpdateExpression: "set #value = :value",
+          ExpressionAttributeNames: { "#value": "value" },
+          ExpressionAttributeValues: {
+            ":value": value,
+          },
+        })
+        .promise();
+    } catch (error) {
+      console.error("Update resource error:", error);
+      throw new Error("Update resource error");
+    }
+  }
 }

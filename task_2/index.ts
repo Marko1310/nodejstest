@@ -17,7 +17,22 @@ export const handler = async function (event: Partial<APIGatewayEvent>) {
     const isAuthorized = await authorized(userId, resourceId, action);
     if (!isAuthorized) throw new HTTP403Error("Forbidden");
 
-    return { statusCode: 200, body: JSON.stringify({}) };
+    let value;
+    switch (action) {
+      case "GET":
+        value = await getResource(resourceId);
+        return { statusCode: 200, body: JSON.stringify({ value }) };
+
+      case "PATCH":
+        value = await updateResource(resourceId, userId);
+        return { statusCode: 200, body: JSON.stringify({ value }) };
+
+      default:
+        return {
+          statusCode: 400,
+          body: JSON.stringify({ message: "Unsupported method" }),
+        };
+    }
   } catch (error) {
     if (error instanceof BaseError) {
       return { statusCode: error.httpStatusCode, body: JSON.stringify({ error: error.message }) };

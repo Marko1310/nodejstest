@@ -1,12 +1,7 @@
-import { DocumentClient } from "aws-sdk/lib/dynamodb/document_client";
 import { dbClient, TableNames } from "../common/db";
 import { Role } from "./role";
-import { UserAttributes } from "common/types";
+import { IDocumentClient, UserAttributes } from "common/types";
 import { HTTP404Error } from "common/errors";
-
-type IDocumentClient<T> = Omit<DocumentClient.AttributeMap["GetItemOutput"], "Item"> & {
-  Item?: T;
-};
 
 export class User {
   id;

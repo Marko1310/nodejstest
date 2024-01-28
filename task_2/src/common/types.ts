@@ -1,3 +1,9 @@
+import { DocumentClient } from "aws-sdk/lib/dynamodb/document_client";
+
+export type IDocumentClient<T> = Omit<DocumentClient.AttributeMap["GetItemOutput"], "Item"> & {
+  Item?: T;
+};
+
 export type UserAttributes = {
   id: string;
   role: string;

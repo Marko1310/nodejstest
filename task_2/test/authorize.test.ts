@@ -118,7 +118,7 @@ test("Allowed: Guest can get resource", async () => {
     httpMethod: "GET",
   });
   expect(statusCode).toBe(HttpStatusCode.OK);
-  expect(JSON.parse(body)).toStrictEqual({ value: 1 });
+  expect(JSON.parse(body)).toStrictEqual({ resourceId: resource.id, value: resource.value });
 });
 
 test("Allowed: Admin can patch value of existing resource", async () => {
@@ -127,7 +127,7 @@ test("Allowed: Admin can patch value of existing resource", async () => {
     httpMethod: "PATCH",
   });
   expect(statusCode).toBe(HttpStatusCode.OK);
-  expect(JSON.parse(body)).toStrictEqual({ value: 2 });
+  expect(JSON.parse(body)).toStrictEqual({ resourceId: resource.id, value: 2 });
 });
 
 test("Allowed: Admin can create new resource if one does not exist", async () => {
@@ -136,5 +136,5 @@ test("Allowed: Admin can create new resource if one does not exist", async () =>
     httpMethod: "PATCH",
   });
   expect(statusCode).toBe(HttpStatusCode.OK);
-  expect(JSON.parse(body)).toStrictEqual({ value: 0 });
+  expect(JSON.parse(body)).toStrictEqual({ resourceId: "2", value: 0 });
 });

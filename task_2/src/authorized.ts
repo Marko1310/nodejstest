@@ -7,10 +7,6 @@ export async function authorized(
   resourceId: string,
   action: "GET" | "PATCH",
 ): Promise<boolean> {
-  // TODO: write authorization logic here
-  // user can GET the resource if they've got GUEST or ADMIN access to the group where resource belongs
-  // user can PATCH the resource if they've got ADMIN access to the group where resource belongs
-
   const user = await User.userExist(userId);
   const resource = await Resource.resourceExist(resourceId);
 

@@ -7,26 +7,20 @@ import { HttpStatusCode } from "common/types";
 
 export const handler = async function (event: Partial<APIGatewayEvent>) {
   try {
-    // TODO: authorize user access to the resource
-    // write it in file src/authorize.ts and import to use here
-
-    // TODO: return value from resource or update it
-    // write it in file src/manageResource.ts and import to use here
-
     const { userId, resourceId, action } = validateEventParameters(event);
 
     const isAuthorized = await authorized(userId, resourceId, action);
     if (!isAuthorized) throw new HTTP403Error("Forbidden");
 
-    let value;
+    let resource;
     switch (action) {
       case "GET":
-        value = await getResource(resourceId);
-        return { statusCode: HttpStatusCode.OK, body: JSON.stringify({ value }) };
+        resource = await getResource(resourceId);
+        return { statusCode: HttpStatusCode.OK, body: JSON.stringify(resource) };
 
       case "PATCH":
-        value = await updateResource(resourceId, userId);
-        return { statusCode: HttpStatusCode.OK, body: JSON.stringify({ value }) };
+        resource = await updateResource(resourceId, userId);
+        return { statusCode: HttpStatusCode.OK, body: JSON.stringify(resource) };
 
       default:
         return {

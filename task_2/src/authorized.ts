@@ -11,13 +11,12 @@ export async function authorized(
   // user can GET the resource if they've got GUEST or ADMIN access to the group where resource belongs
   // user can PATCH the resource if they've got ADMIN access to the group where resource belongs
 
-  const user = await User.getById(userId);
-  const resource = await Resource.getById(resourceId);
+  const user = await User.userExist(userId);
+  const resource = await Resource.resourceExist(resourceId);
 
-  if (!user || !resource) {
-    return false;
-  }
-  if (action === "GET") return user.groupId === resource.groupId;
-  if (action === "PATCH") return user.role === Role.ADMIN && resource.groupId === user.groupId;
+  if (!user) return false;
+  if (action === "GET") return !resource || user.groupId === resource.groupId;
+  if (action === "PATCH")
+    return !resource || (user.role === Role.ADMIN && resource.groupId === user.groupId);
   return false;
 }

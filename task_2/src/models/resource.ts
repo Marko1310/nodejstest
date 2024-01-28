@@ -26,4 +26,12 @@ export class Resource {
 
     return new Resource(resource);
   }
+
+  static async resourceExist(resourceId: string): Promise<Resource | undefined> {
+    try {
+      return await this.getById(resourceId);
+    } catch (error) {
+      if (error instanceof HTTP404Error) return undefined;
+    }
+  }
 }

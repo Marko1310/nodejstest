@@ -27,4 +27,12 @@ export class User {
 
     return new User(user);
   }
+
+  static async userExist(userId: string): Promise<User | undefined> {
+    try {
+      return await this.getById(userId);
+    } catch (error) {
+      if (error instanceof HTTP404Error) return undefined;
+    }
+  }
 }
